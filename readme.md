@@ -23,19 +23,19 @@ Right-click anywhere on the screen, and click Inspect.
 <thead>
 <tr>
 <th>How to show <code>console</code></th>
-<th>| Keyboard shortcuts</th>
+<th>Keyboard shortcuts</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Focus mode</td>
-<td>| Ctrl + Shift + J</td>
+<td>Ctrl + Shift + J</td>
 </tr>
 </tbody>
 <tbody>
 <tr>
 <td>Show or hide the <code>console</code> from another DevTools tab	</td>
-<td>| Ctrl + ` (back tick)</td>
+<td>Ctrl + ` (back tick)</td>
 </tr>
 </tbody>
 </table>
