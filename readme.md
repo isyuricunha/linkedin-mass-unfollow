@@ -19,8 +19,32 @@ Hard: To unfollow all your connections.
 
 Right-click anywhere on the screen, and click Inspect.
 
-Then, go to the Console view and paste the code.
+<table>
+<thead>
+<tr>
+<th>How to show <code>console</code></th>
+<th>| Keyboard shortcuts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Focus mode</td>
+<td>| Ctrl + Shift + J</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td>Show or hide the <code>console</code> from another DevTools tab	</td>
+<td>| Ctrl + ` (back tick)</td>
+</tr>
+</tbody>
+</table>
+<br>
 
-Press Enter. You will see that you have unfollowed all the connections on the screen.
+Then, go to the <code>console</code> view and paste the code.
+
+![Console open](https://balsamiq.com/assets/support/faqs/chrome_dev_02.png)<br>
+
+Press <code>Enter</code>. You will see that you have unfollowed all the connections on the screen.
 
 Then, scroll down until you see connections that you’re still following and repeat the process.
