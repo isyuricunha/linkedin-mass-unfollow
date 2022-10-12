@@ -47,4 +47,4 @@ Em seguida, vá para a exibição do <code>console</code> e cole o código.
 
 Aperte <code>Enter</code>. Você vai ver que deixou de seguir todas as conexões na tela.
 
-Em seguida, role para baixo até ver as conexões que você ainda segue e repita o `processo`.
+Em seguida, role para baixo até ver as conexões que você ainda segue e repita o processo.
