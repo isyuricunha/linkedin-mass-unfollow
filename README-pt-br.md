@@ -1,4 +1,4 @@
-<table align="left">
+<table align="flex">
  <tr><td><a href="https://github.com/isyuricunha/linkedin-mass-unfollow/blob/main/readme.md">:us: English</a></td></tr>
  <tr><td><a href="https://github.com/isyuricunha/linkedin-mass-unfollow/blob/main/readme-pt-br.md">:brazil: Português</a></td></tr>
 </table>
