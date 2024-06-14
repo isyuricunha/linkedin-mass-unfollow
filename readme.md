@@ -41,6 +41,10 @@ Right-click anywhere on the screen, and click Inspect.
 </table>
 <br>
 
+Go to your follower/following:
+
+[Click here](https://www.linkedin.com/mynetwork/network-manager/people-follow/followers/) or copy and paste: https://www.linkedin.com/mynetwork/network-manager/people-follow/followers/
+
 Then, go to the <code>console</code> view and paste the code.
 
 ![Console open](https://balsamiq.com/assets/support/faqs/chrome_dev_02.png)<br>
