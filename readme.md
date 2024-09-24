@@ -41,7 +41,7 @@ Right-click anywhere on the screen, and click Inspect.
 </table>
 <br>
 
-PS: Keep the tab open to script still runing. You can alternated to another windows on your system, but not keep the tab open. Don't close!
+PS: Keep the tab open to script still runing. You can alternated to another windows on your system, but keep the tab open. Don't close!
 
 Go to your follower/following:
 
