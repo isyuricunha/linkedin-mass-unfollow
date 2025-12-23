@@ -68,6 +68,8 @@ This tool provides two sophisticated JavaScript scripts to help you mass unfollo
    - Paste into the browser console
    - Press `Enter`
 
+Note: The scripts validate `window.location.pathname` and will refuse to start if you're not on the followers page. If you navigate away while running, the script will automatically stop.
+
 ## 📖 Usage
 
 ### Soft Mode (Recommended for Beginners)
@@ -149,6 +151,7 @@ LinkedInUnfollow.config.logging = false;             // Disable logging
 - ✅ Monitor the console output regularly
 - ✅ Use reasonable delay settings
 - ✅ Don't run multiple scripts simultaneously
+- ✅ Stay on the followers page while running (the script will stop automatically if the page changes)
 - ❌ Don't close the browser tab while running
 - ❌ Don't navigate away from the LinkedIn page
 - ❌ Don't run scripts on other LinkedIn pages
@@ -191,6 +194,7 @@ console.log(status);
 - Check console for error messages
 - Verify you haven't hit the safety limit
 - Ensure LinkedIn page is still loaded
+- Ensure you're still on `https://www.linkedin.com/mynetwork/network-manager/people-follow/followers/`
 
 **LinkedIn showing errors?**
 - Increase delays between actions

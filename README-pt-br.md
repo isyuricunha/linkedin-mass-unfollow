@@ -68,6 +68,8 @@ Esta ferramenta fornece dois scripts JavaScript sofisticados para ajudá-lo a de
    - Cole no console do navegador
    - Pressione `Enter`
 
+Observação: os scripts validam `window.location.pathname` e não iniciam se você não estiver na página de seguidores. Se você navegar para outra página enquanto o script estiver rodando, ele irá parar automaticamente.
+
 ## 📖 Uso
 
 ### Modo Suave (Recomendado para Iniciantes)
@@ -149,6 +151,7 @@ LinkedInUnfollow.config.logging = false;             // Desabilitar logging
 - ✅ Monitore a saída do console regularmente
 - ✅ Use configurações de atraso razoáveis
 - ✅ Não execute múltiplos scripts simultaneamente
+- ✅ Permaneça na página de seguidores enquanto executa (o script para automaticamente se a página mudar)
 - ❌ Não feche a aba do navegador enquanto executa
 - ❌ Não navegue para longe da página do LinkedIn
 - ❌ Não execute scripts em outras páginas do LinkedIn
@@ -191,6 +194,7 @@ console.log(status);
 - Verifique o console para mensagens de erro
 - Verifique se você não atingiu o limite de segurança
 - Certifique-se de que a página do LinkedIn ainda está carregada
+- Confirme se você ainda está em `https://www.linkedin.com/mynetwork/network-manager/people-follow/followers/`
 
 **LinkedIn mostrando erros?**
 - Aumente os atrasos entre ações
