@@ -223,7 +223,7 @@ Contributions are welcome! Please feel free to submit issues, feature requests, 
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](license.md) file for details.
+This project is licensed under the AGPL-3.0 license - see the [LICENSE](license.md) file for details.
 
 ## ⚠️ Disclaimer
 
