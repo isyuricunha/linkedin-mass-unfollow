@@ -19,6 +19,8 @@
 
 (function() {
     'use strict';
+
+    const EXPECTED_PATHNAME = '/mynetwork/network-manager/people-follow/followers/';
     
     // Configuration object for customizable behavior
     const CONFIG = {
@@ -84,6 +86,25 @@
      */
     function wait(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function normalizePathname(pathname) {
+        if (!pathname) return '/';
+        return pathname.endsWith('/') ? pathname : `${pathname}/`;
+    }
+
+    function isExpectedLinkedInPage() {
+        return normalizePathname(window.location.pathname) === EXPECTED_PATHNAME;
+    }
+
+    function assertExpectedLinkedInPage() {
+        if (isExpectedLinkedInPage()) return true;
+
+        log('This script must be executed on the LinkedIn followers page:', 'error');
+        log(`Expected pathname: ${EXPECTED_PATHNAME}`, 'error');
+        log(`Current URL: ${window.location.href}`, 'error');
+        log('Open: https://www.linkedin.com/mynetwork/network-manager/people-follow/followers/', 'error');
+        return false;
     }
 
     /**
@@ -160,6 +181,11 @@
     async function processVisibleConnections() {
         if (!state.isRunning || state.isPaused) return;
 
+        if (!isExpectedLinkedInPage()) {
+            stopScript('Page changed (not on LinkedIn followers page anymore)');
+            return;
+        }
+
         const followingButtons = findFollowingButtons();
         
         if (followingButtons.length === 0) {
@@ -203,6 +229,8 @@
             log('Script is already running', 'warn');
             return;
         }
+
+        if (!assertExpectedLinkedInPage()) return;
 
         state.isRunning = true;
         state.isPaused = false;

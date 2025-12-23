@@ -20,6 +20,11 @@
 
 (function() {
     'use strict';
+ 
+     const processedUserKeys = new Set();
+     const attemptsByUserKey = new Map();
+
+     const EXPECTED_PATHNAME = '/mynetwork/network-manager/people-follow/followers/';
     
     // Configuration object for customizable behavior
     const CONFIG = {
@@ -99,6 +104,25 @@
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    function normalizePathname(pathname) {
+        if (!pathname) return '/';
+        return pathname.endsWith('/') ? pathname : `${pathname}/`;
+    }
+
+    function isExpectedLinkedInPage() {
+        return normalizePathname(window.location.pathname) === EXPECTED_PATHNAME;
+    }
+
+    function assertExpectedLinkedInPage() {
+        if (isExpectedLinkedInPage()) return true;
+
+        log('This script must be executed on the LinkedIn followers page:', 'error');
+        log(`Expected pathname: ${EXPECTED_PATHNAME}`, 'error');
+        log(`Current URL: ${window.location.href}`, 'error');
+        log('Open: https://www.linkedin.com/mynetwork/network-manager/people-follow/followers/', 'error');
+        return false;
+    }
+
     /**
      * Check if the page is currently loading
      * @returns {boolean} True if page is loading
@@ -130,10 +154,38 @@
             const text = button.innerText.trim();
             const isVisible = button.offsetParent !== null;
             const rect = button.getBoundingClientRect();
-            const isInViewport = rect.top >= 0 && rect.bottom <= window.innerHeight;
+            const isInViewport = rect.bottom > 0 && rect.top < window.innerHeight;
             
             return (text === "Following" || text === "Seguindo") && isVisible && isInViewport;
         });
+    }
+
+    function getUserKeyFromButton(followButton) {
+        const userCard = followButton.closest('[data-test-id="people-card"]') || 
+                        followButton.closest('.follows-recommendation-card') ||
+                        followButton.closest('.reusable-search__result-container');
+
+        if (!userCard) return null;
+
+        const entityUrn =
+            userCard.getAttribute('data-entity-urn') ||
+            userCard.getAttribute('data-urn') ||
+            userCard.querySelector('[data-entity-urn]')?.getAttribute('data-entity-urn') ||
+            userCard.querySelector('[data-urn]')?.getAttribute('data-urn');
+
+        if (entityUrn) return entityUrn;
+
+        const profileHref = userCard.querySelector('a[href*="/in/"]')?.getAttribute('href');
+        if (profileHref) {
+            try {
+                const url = new URL(profileHref, window.location.origin);
+                return url.pathname;
+            } catch {
+                return profileHref;
+            }
+        }
+
+        return userCard.textContent?.trim() || null;
     }
 
     /**
@@ -141,7 +193,7 @@
      * @returns {Promise<boolean>} True if new content was loaded
      */
     async function scrollDown() {
-        const currentHeight = document.body.scrollHeight;
+        const currentHeight = document.documentElement.scrollHeight;
         
         // Scroll down
         if (CONFIG.scrolling.smoothScroll) {
@@ -158,7 +210,7 @@
         await waitForPageLoad();
 
         // Check if new content was loaded
-        const newHeight = document.body.scrollHeight;
+        const newHeight = document.documentElement.scrollHeight;
         const hasNewContent = newHeight > currentHeight;
         
         if (hasNewContent) {
@@ -242,7 +294,14 @@
      * @returns {Promise<void>}
      */
     async function processConnections() {
+        const triedInCurrentViewport = new Set();
+
         while (state.isRunning && !state.isPaused) {
+            if (!isExpectedLinkedInPage()) {
+                stopScript('Page changed (not on LinkedIn followers page anymore)');
+                return;
+            }
+
             // Check safety limits
             if (state.unfollowedCount >= CONFIG.limits.maxUnfollows) {
                 log(`Reached maximum unfollow limit (${CONFIG.limits.maxUnfollows})`, 'warn');
@@ -259,10 +318,24 @@
 
             // Find visible following buttons
             const followingButtons = findFollowingButtons();
-            
-            if (followingButtons.length === 0) {
-                log('No "Following" buttons found on current screen, scrolling...');
-                
+
+            const nextButton = followingButtons.find(button => {
+                const userKey = getUserKeyFromButton(button);
+                if (!userKey) return false;
+                if (processedUserKeys.has(userKey)) return false;
+
+                const attempts = attemptsByUserKey.get(userKey) ?? 0;
+                if (attempts >= CONFIG.limits.maxRetries) return false;
+
+                if (triedInCurrentViewport.has(userKey)) return false;
+                return true;
+            });
+
+            if (!nextButton) {
+                log('No new "Following" buttons to process on current screen, scrolling...');
+
+                triedInCurrentViewport.clear();
+
                 const hasNewContent = await scrollDown();
                 if (!hasNewContent) {
                     state.noProgressCycles++;
@@ -275,33 +348,36 @@
                 continue;
             }
 
-            // Reset no progress counter when we find buttons
+            // Reset no progress counter when we find a button
             state.noProgressCycles = 0;
-            log(`Found ${followingButtons.length} connections to process`);
 
-            // Process each following button
-            for (let i = 0; i < followingButtons.length && state.isRunning && !state.isPaused; i++) {
-                const button = followingButtons[i];
-                state.processedCount++;
-                
-                const success = await unfollowUser(button);
-                
-                // Wait between processing users to avoid rate limiting
+            const userKey = getUserKeyFromButton(nextButton);
+            if (!userKey) {
                 await wait(CONFIG.delays.betweenUsers);
+                continue;
+            }
 
-                // Check safety limits again
-                if (state.unfollowedCount >= CONFIG.limits.maxUnfollows) {
-                    log(`Reached maximum unfollow limit (${CONFIG.limits.maxUnfollows})`, 'warn');
-                    stopScript('Safety limit reached');
-                    return;
+            triedInCurrentViewport.add(userKey);
+
+            log(`Found 1 connection to process (visible candidates: ${followingButtons.length})`);
+
+            state.processedCount++;
+            const success = await unfollowUser(nextButton);
+
+            if (success) {
+                processedUserKeys.add(userKey);
+                attemptsByUserKey.delete(userKey);
+            } else {
+                const attempts = (attemptsByUserKey.get(userKey) ?? 0) + 1;
+                attemptsByUserKey.set(userKey, attempts);
+
+                if (attempts >= CONFIG.limits.maxRetries) {
+                    processedUserKeys.add(userKey);
+                    log(`Giving up on user after ${attempts} attempts`, 'warn');
                 }
             }
 
-            // After processing visible buttons, scroll to load more
-            if (state.isRunning && !state.isPaused) {
-                log('Finished processing visible connections, scrolling for more...');
-                await scrollDown();
-            }
+            await wait(CONFIG.delays.betweenUsers);
         }
     }
 
@@ -314,6 +390,11 @@
             return;
         }
 
+        if (!assertExpectedLinkedInPage()) return;
+
+        processedUserKeys.clear();
+        attemptsByUserKey.clear();
+
         // Reset state
         state.isRunning = true;
         state.isPaused = false;
@@ -322,7 +403,7 @@
         state.errorCount = 0;
         state.scrollAttempts = 0;
         state.noProgressCycles = 0;
-        state.lastScrollHeight = document.body.scrollHeight;
+        state.lastScrollHeight = document.documentElement.scrollHeight;
         state.startTime = Date.now();
         state.lastUnfollowTime = null;
 
