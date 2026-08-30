@@ -233,6 +233,10 @@ This project is licensed under the AGPL-3.0 license - see the [LICENSE](license.
 
 This tool is for educational purposes. Users are responsible for complying with LinkedIn's Terms of Service. The authors are not responsible for any consequences of using this tool.
 
+## 🙏 Acknowledgements
+
+Early versions of this project were informed by public LinkedIn mass-unfollow scripts and community examples, including work published by [verfasor](https://github.com/verfasor) on [mgx.me](https://mgx.me/script-to-mass-unfollow-everyone-on-linkedin) and in [mass-unfollow-linkedin](https://github.com/verfasor/mass-unfollow-linkedin). The project has since been substantially refactored and evolved independently.
+
 ---
 
 <div align="center">
