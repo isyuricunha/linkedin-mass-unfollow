@@ -233,6 +233,10 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](lice
 
 Esta ferramenta é para fins educacionais. Os usuários são responsáveis por cumprir os Termos de Serviço do LinkedIn. Os autores não são responsáveis por quaisquer consequências do uso desta ferramenta.
 
+## 🙏 Agradecimentos
+
+As primeiras versões deste projeto foram influenciadas por scripts públicos de unfollow em massa no LinkedIn e exemplos da comunidade, incluindo o trabalho publicado por [verfasor](https://github.com/verfasor) no [mgx.me](https://mgx.me/script-to-mass-unfollow-everyone-on-linkedin) e no repositório [mass-unfollow-linkedin](https://github.com/verfasor/mass-unfollow-linkedin). Desde então, o projeto foi substancialmente refatorado e evoluiu de forma independente.
+
 ---
 
 <div align="center">
